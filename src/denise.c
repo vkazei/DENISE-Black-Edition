@@ -142,9 +142,9 @@ if(PHYSICS==4){
 /* ---------------------------------------------------- */
 /* Forward, FWI, RTM and RTMOD modules (2D SH-problem)  */
 /* ---------------------------------------------------- */
-if(PHYSICS==5){
+/*if(PHYSICS==5){
   physics_SH();
-}
+}*/
 
 MPI_Comm_free(&SHOT_COMM);
 

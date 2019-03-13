@@ -183,7 +183,7 @@ DENISE += ac.c \
 	  zero_denise_acoustic_AC.c
 
 # add SH source files
-DENISE += alloc_fwiSH.c \
+#DENISE += alloc_fwiSH.c \
 	  alloc_matSH.c \
 	  alloc_seisSH.c \
 	  alloc_seisSHfull.c \
