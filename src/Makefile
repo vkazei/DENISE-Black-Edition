@@ -28,12 +28,19 @@ EXEC= ../bin
 # SFLAGS=-L./../libcseife -L$//sfs/fs2/work-sh2/sungw331/fftw-3.3.4/lib
 # IFLAGS=-I./../libcseife -I$//sfs/fs2/work-sh2/sungw331/fftw-3.3.4/include -I./../include
 
+# OpenACC PGI compiler
+# CC=mpicc -Minfo=all -ta=multicore #tesla:cc60,managed
+# LFLAGS=-lm -lcseife -lfftw3 -lstdc++
+# CFLAGS=-O3 -w -D_FORTIFY_SOURCE=0
+# SFLAGS=-L./../libcseife -L/scratch/dragon/amd/kazeiv/gpuhackathon2018/fftw_sw/fftw-3.3.7/lib/
+# IFLAGS=-I./../libcseife -I./../include -I/scratch/dragon/amd/kazeiv/gpuhackathon2018/fftw_sw/fftw-3.3.7/include/
+
 # On Desktop computer with LinuxMint 17, OpenMPI and gcc 4.8.2
-CC=mpicc -acc -Minfo=accel -ta=tesla:cc60,managed
-LFLAGS=-lm -lcseife -lfftw3 -lstdc++
-CFLAGS=-O3 -w -D_FORTIFY_SOURCE=0
-SFLAGS=-L./../libcseife -L/scratch/dragon/amd/ovcharoo/gpuhackathon2019/fftw_sw/fftw-3.3.7/lib/
-IFLAGS=-I./../libcseife -I./../include -I/scratch/dragon/amd/ovcharoo/gpuhackathon2019/fftw_sw/fftw-3.3.7/include/
+#CC=mpicc
+#LFLAGS=-lm -lcseife -lfftw3 -lstdc++
+#CFLAGS=-O3 -w -fno-stack-protector -D_FORTIFY_SOURCE=0
+#SFLAGS=-L./../libcseife
+#IFLAGS=-I./../libcseife -I./../include
 
 # On HLRN system
 #CC=mpcc

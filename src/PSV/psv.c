@@ -21,7 +21,7 @@ void psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, struct matPSV
 
 	/* global variables */
 	extern float DT, DH, TSNAP1, TSNAP2, TSNAPINC;
-	extern int MYID_SHOT, FDORDER, FW, L, GRAD_FORM, FC_SPIKE_1, FC_SPIKE_2, ORDER_SPIKE;
+	extern int MYID, MYID_SHOT, FDORDER, FW, L, GRAD_FORM, FC_SPIKE_1, FC_SPIKE_2, ORDER_SPIKE;
 	extern int NX, NY, FREE_SURF, BOUNDARY, MODE, QUELLTYP, QUELLTYPB, QUELLART, FDORDER;
 	extern int NPROCX, NPROCY, POS[3], NDT, SEISMO, IDXI, IDYI, GRAD_FORM, DTINV;
 	extern int SNAP, INVMAT1, INV_STF, EPRECOND, NTDTINV, NXNYI, NT;
@@ -121,6 +121,7 @@ void psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, struct matPSV
 		}
 	}
 
+<<<<<<< HEAD
 #pragma acc data copyin(POS [0:3])
 	{
 
@@ -199,6 +200,17 @@ void psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, struct matPSV
 			}
 
 			/*if (MYID==0){
+=======
+
+                if(mode==1){
+	         update_v_PML_PSV(1, NX, 1, NY, nt, (*wavePSV).pvx, (*wavePSV).pvxp1, (*wavePSV).pvxm1, (*wavePSV).pvy, (*wavePSV).pvyp1, (*wavePSV).pvym1, (*wavePSV).uttx, (*wavePSV).utty, (*wavePSV).psxx, (*wavePSV).psyy, 
+                              (*wavePSV).psxy, (*matPSV).prip, (*matPSV).prjp, (*acq).srcpos_loc_back, (*seisPSVfwi).sectionvxdiff, (*seisPSVfwi).sectionvydiff,ntr,(*wavePSV_PML).absorb_coeff,hc,infoout, 1, (*wavePSV_PML).K_x,
+ 	                      (*wavePSV_PML).a_x, (*wavePSV_PML).b_x, (*wavePSV_PML).K_x_half, (*wavePSV_PML).a_x_half, (*wavePSV_PML).b_x_half, (*wavePSV_PML).K_y, (*wavePSV_PML).a_y, (*wavePSV_PML).b_y, (*wavePSV_PML).K_y_half, 
+                              (*wavePSV_PML).a_y_half, (*wavePSV_PML).b_y_half, (*wavePSV_PML).psi_sxx_x, (*wavePSV_PML).psi_syy_y, (*wavePSV_PML).psi_sxy_y, (*wavePSV_PML).psi_sxy_x);
+                }
+		                 
+		/*if (MYID==0){
+>>>>>>> 9f390d7e76c57015d75616d6b957b49acd7db9ef
 		if (mode == 1)
 		{
 			update_v_PML_PSV(1, NX, 1, NY, nt, (*wavePSV).pvx, (*wavePSV).pvxp1, (*wavePSV).pvxm1, (*wavePSV).pvy, (*wavePSV).pvyp1, (*wavePSV).pvym1, (*wavePSV).uttx, (*wavePSV).utty, (*wavePSV).psxx, (*wavePSV).psyy,
@@ -213,9 +225,14 @@ void psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, struct matPSV
 			if (infoout)  fprintf(FP," particle velocity exchange between PEs ...");
 		}*/
 
+<<<<<<< HEAD
 			/* exchange of particle velocities between PEs */
 
 			exchange_v_PSV((*wavePSV).pvx, (*wavePSV).pvy, (*mpiPSV).bufferlef_to_rig, (*mpiPSV).bufferrig_to_lef, (*mpiPSV).buffertop_to_bot, (*mpiPSV).bufferbot_to_top, req_send, req_rec);
+=======
+		/* exchange of particle velocities between PEs */
+		exchange_v_PSV((*wavePSV).pvx, (*wavePSV).pvy, (*mpiPSV).bufferlef_to_rig, (*mpiPSV).bufferrig_to_lef, (*mpiPSV).buffertop_to_bot, (*mpiPSV).bufferbot_to_top, req_send, req_rec);
+>>>>>>> 9f390d7e76c57015d75616d6b957b49acd7db9ef
 
 			/*if (MYID_SHOT==0){
 		  time5=MPI_Wtime();
@@ -375,12 +392,9 @@ void psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, struct matPSV
 
 				hin++;
 				hin1 = hin1 + DTINV;
-
 				DTINV_help[nt] = 1;
-			}
-
-			/* save backpropagated wavefields for time-domain inversion and partially assemble gradients */
-			/* ----------------------------------------------------------------------------------------- */
+			/* save adjoint wavefields for time-domain inversion and partially assemble gradients */
+			/* ---------------------------------------------------------------------------------- */
 			if ((mode == 1) && (DTINV_help[NT - nt + 1] == 1))
 			{
 
