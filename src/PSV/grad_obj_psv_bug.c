@@ -53,18 +53,56 @@ float grad_obj_psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, str
         SHOTINC=1;
 
 	if (RUN_MULTIPLE_SHOTS) nshots=nsrc; else nshots=1;
-					  
-	/* dividing shots into NCOLORS groups */
-        NSHOT1 = (1 + (NSHOTS-1) / NCOLORS) * COLOR + 1;
-        NSHOT2 = min(NSHOT1 + (NSHOTS-1) / NCOLORS, NSHOTS);
 
+	for (ishot=1;ishot<=nshots;ishot+=SHOTINC){
+	/*for (ishot=1;ishot<=1;ishot+=1){*/
+	/*if(ishot!=10 && ishot!=11 && ishot!=12 && ishot!=13 && ishot!=14 && ishot!=16 && ishot!=29){*/	
+
+	/*initialize gradient matrices for each shot with zeros*/
+	init_grad((*fwiPSV).waveconv_shot);
+	init_grad((*fwiPSV).waveconv_u_shot);
+	init_grad((*fwiPSV).waveconv_rho_shot);
+
+	if((EPRECOND==1)||(EPRECOND==3)){
+	   init_grad(Ws);
+	   init_grad(Wr);
+	   init_grad(We);
+	}			
+	  
+	if((N_STREAMER>0)||(READREC==2)){
+
+	   if (SEISMO){
+	      (*acq).recpos=receiver(FP, &ntr, ishot);
+	      (*acq).recswitch = ivector(1,ntr);
+	      (*acq).recpos_loc = splitrec((*acq).recpos,&ntr_loc, ntr, (*acq).recswitch);
+	      ntr_glob=ntr;
+	      ntr=ntr_loc;
+	   }
+
+	   /* Memory for seismic data */
+	   alloc_seisPSV(ntr,ns,seisPSV);
+	   
+	   /* Memory for full data seismograms */
+           alloc_seisPSVfull(seisPSV,ntr_glob);
+
+	   /* Memory for FWI seismic data */ 
+	   alloc_seisPSVfwi(ntr,ntr_glob,ns,seisPSVfwi);
+
+	if (RUN_MULTIPLE_SHOTS)
+		nshots = nsrc;
+	else
+		nshots = 1;
+
+	// dividing shots into NCOLORS groups
+    NSHOT1 = (1 + (NSHOTS-1) / NCOLORS) * COLOR + 1;
+    NSHOT2 = min(NSHOT1 + (NSHOTS-1) / NCOLORS, NSHOTS);
+
+	//printf("I'm at grad_obj_psv line 63, MYID = %d, NSHOT1 = %d,  NSHOT2 = %d", MYID, NSHOT1, NSHOT2);
 	MPI_Barrier(MPI_COMM_WORLD);
-
 	for (ishot = NSHOT1; ishot <= NSHOT2; ishot += 1)
 	{
 		/*for (ishot=1;ishot<=1;ishot+=1){*/
-		/*if(ishot!=10 && ishot!=11 && ishot!=12 && ishot!=13 && ishot!=14 && ishot!=16 && ishot!=29){*/
-
+		printf("ISHOT = %d", ishot);
 		/*initialize gradient matrices for each shot with zeros*/
 		init_grad((*fwiPSV).waveconv_shot);
 		init_grad((*fwiPSV).waveconv_u_shot);
@@ -124,7 +162,7 @@ float grad_obj_psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, str
 
 		/*==================================================================================
 		        Estimate source time function by Wiener deconvolution
-	        ==================================================================================*/
+	==================================================================================*/
 
 		if ((INV_STF) && (iter == 1))
 		{
@@ -133,7 +171,7 @@ float grad_obj_psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, str
 
 		/*==================================================================================
 		           Starting simulation (forward model)
-	        ==================================================================================*/
+	==================================================================================*/
 
 		/* calculate wavelet for each source point */
 		(*acq).signals = NULL;
@@ -174,10 +212,9 @@ float grad_obj_psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, str
 		/* solve forward problem */
 		psv(wavePSV, wavePSV_PML, matPSV, fwiPSV, mpiPSV, seisPSV, seisPSVfwi, acq, hc, ishot, nshots, nsrc_loc, ns, ntr, Ws, Wr, hin, DTINV_help, 0, req_send, req_rec);
 		//printf("I solved forward problem for ishot=%d; \n",ishot);
-		
 		/* ===============================================
-	        Calculate objective function and data residuals
-	        =============================================== */
+	   Calculate objective function and data residuals
+	   =============================================== */
 
 		if ((ishot == itestshot) && (ishot <= TESTSHOT_END))
 		{
@@ -204,8 +241,47 @@ float grad_obj_psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, str
 		}
 
 		/*================================================================================
-		        Starting simulation (adjoint model)
-	        ==================================================================================*/
+		        Starting simulation (backward model)
+	==================================================================================*/
+	    /* Distribute multiple source positions on subdomains */
+	    /* define source positions at the receivers */
+	    (*acq).srcpos_loc_back = matrix(1,6,1,ntr);
+	    for (i=1;i<=ntr;i++){
+		(*acq).srcpos_loc_back[1][i] = ((*acq).recpos_loc[1][i]);
+		(*acq).srcpos_loc_back[2][i] = ((*acq).recpos_loc[2][i]);
+	    }
+		                            
+	   /* solve adjoint problem */
+	   psv(wavePSV,wavePSV_PML,matPSV,fwiPSV,mpiPSV,seisPSV,seisPSVfwi,acq,hc,ishot,nshots,ntr,ns,ntr,Ws,Wr,hin,DTINV_help,1,req_send,req_rec);               
+
+	   /* assemble PSV gradients for each shot */
+	   ass_gradPSV(fwiPSV,matPSV,iter);
+
+	if((EPRECOND==1)||(EPRECOND==3)){
+	  /* calculate energy weights */
+	  eprecond1(We,Ws,Wr);
+	      
+	  /* scale gradient with energy weights*/
+	  for(i=1;i<=NX;i=i+IDX){
+	      for(j=1;j<=NY;j=j+IDY){
+
+		     (*fwiPSV).waveconv_shot[j][i] = (*fwiPSV).waveconv_shot[j][i]/(We[j][i]*C_vp*C_vp);
+		     (*fwiPSV).waveconv_u_shot[j][i] = (*fwiPSV).waveconv_u_shot[j][i]/(We[j][i]*C_vs*C_vs);
+		     if(C_vs==0.0){(*fwiPSV).waveconv_u_shot[j][i] = 0.0;}
+		     (*fwiPSV).waveconv_rho_shot[j][i] = (*fwiPSV).waveconv_rho_shot[j][i]/(We[j][i]*C_rho*C_rho);
+
+	      }
+	  }
+	}
+
+	if (SWS_TAPER_CIRCULAR_PER_SHOT){    /* applying a circular taper at the source position to the gradient of each shot */
+	
+		/* applying the preconditioning */
+		taper_grad_shot((*fwiPSV).waveconv_shot,taper_coeff,(*acq).srcpos,nsrc,(*acq).recpos,ntr_glob,ishot);
+		taper_grad_shot((*fwiPSV).waveconv_rho_shot,taper_coeff,(*acq).srcpos,nsrc,(*acq).recpos,ntr_glob,ishot);
+		taper_grad_shot((*fwiPSV).waveconv_u_shot,taper_coeff,(*acq).srcpos,nsrc,(*acq).recpos,ntr_glob,ishot);
+	
+	} /* end of SWS_TAPER_CIRCULAR_PER_SHOT == 1 */
 
 		/* Distribute multiple source positions on subdomains */
 		/* define source positions at the receivers */
@@ -218,18 +294,19 @@ float grad_obj_psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, str
 
 		/* solve adjoint problem */
 		psv(wavePSV, wavePSV_PML, matPSV, fwiPSV, mpiPSV, seisPSV, seisPSVfwi, acq, hc, ishot, nshots, ntr, ns, ntr, Ws, Wr, hin, DTINV_help, 1, req_send, req_rec);
-
-
+		//printf("I solved adjoint problem \n");
 		/* assemble PSV gradients for each shot */
 		ass_gradPSV(fwiPSV, matPSV, iter);
 		MPI_Barrier(SHOT_COMM);
-
-		/* apply preconditioning operators */
+		//printf("I assembled gradients \n");
+		//printf("ishot=%d; \n",ishot);
+		//printf("after SHOT tapering ishot=%d; \n",ishot);
 		if ((EPRECOND == 1) || (EPRECOND == 3))
 		{
 			/* calculate energy weights */
+			
 			eprecond1(We, Ws, Wr);
-
+			//printf("eprecond1(We, Ws, Wr) calculated; \n");
 			/* scale gradient with energy weights*/
 			for (i = 1; i <= NX; i = i + IDX)
 			{
@@ -246,8 +323,7 @@ float grad_obj_psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, str
 				}
 			}
 		}
-
-
+		//printf("eprecond1(We, Ws, Wr) applied; \n");
 		if (SWS_TAPER_CIRCULAR_PER_SHOT)
 		{ /* applying a circular taper at the source position to the gradient of each shot */
 
@@ -255,8 +331,9 @@ float grad_obj_psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, str
 			taper_grad_shot((*fwiPSV).waveconv_shot, taper_coeff, (*acq).srcpos, nsrc, (*acq).recpos, ntr_glob, ishot);
 			taper_grad_shot((*fwiPSV).waveconv_rho_shot, taper_coeff, (*acq).srcpos, nsrc, (*acq).recpos, ntr_glob, ishot);
 			taper_grad_shot((*fwiPSV).waveconv_u_shot, taper_coeff, (*acq).srcpos, nsrc, (*acq).recpos, ntr_glob, ishot);
-
+			//printf("SHOT tapering applied applied ishot=%d; \n",ishot);
 		} /* end of SWS_TAPER_CIRCULAR_PER_SHOT == 1 */
+		//printf("after SHOT tapering ishot=%d; \n",ishot);
 		
 		// loop for stacking the gradients in groups of shots (for single COLOR)
 		for (i = 1; i <= NX; i = i + IDX)
@@ -340,22 +417,22 @@ float grad_obj_psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, str
 		}
 
 		nsrc_loc = 0;
-        //} /* excluded shots */
-	} /* end of loop over shots (forward and adjoint) */
+  //} /* excluded shots */
+	} /* end of loop over shots (forward and backpropagation) */
 
 	/* stack gradient over colors */
-	/* loop for stacking the gradients */
+
+	// loop for stacking the gradients
 		for (i = 1; i <= NX; i = i + IDX)
 		{
 			for (j = 1; j <= NY; j = j + IDY)
 			{
-				/* gathering gradients within subdomains */
+				// gathering gradients within subdomains
 				tmp_dg = (*fwiPSV).waveconv[j][i];
 				MPI_Allreduce(&tmp_dg, &((*fwiPSV).waveconv[j][i]), 1, MPI_FLOAT, MPI_SUM, DOMAIN_COMM);
-
+				//(*fwiPSV).waveconv[j][i] += (*fwiPSV).waveconv_shot[j][i];
 				tmp_dg = (*fwiPSV).waveconv_rho[j][i];
 				MPI_Allreduce(&tmp_dg, &((*fwiPSV).waveconv_rho[j][i]), 1, MPI_FLOAT, MPI_SUM, DOMAIN_COMM);
-
 				tmp_dg = (*fwiPSV).waveconv_u[j][i];
 				MPI_Allreduce(&tmp_dg, &((*fwiPSV).waveconv_u[j][i]), 1, MPI_FLOAT, MPI_SUM, DOMAIN_COMM);
 			}
@@ -376,9 +453,7 @@ float grad_obj_psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, str
 		printf("energy_sum: %e\n\n", energy_all_shots);
 
 	}*/
-
 	MPI_Barrier(MPI_COMM_WORLD);
-
 	if (LNORM == 2)
 	{
 		L2sum = L2sum / energy_all_shots;

@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --partition=batch
 #SBATCH --job-name="DENISE"
-# SBATCH --res=HACKATHON_TEAMS
+# df d #SBATCH --res=HACKATHON_TEAMS
 #SBATCH --gres=gpu:p100:1
 #SBATCH --nodes=1
 #SBATCH --tasks=36

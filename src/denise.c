@@ -60,6 +60,8 @@ int main(int argc, char **argv){
 char * fileinp;
 FILE *fpsrc;
 
+printf("I AM HERE\n");
+
 /* Initialize MPI environment */
 MPI_Init(&argc,&argv);
 MPI_Comm_size(MPI_COMM_WORLD,&NP);

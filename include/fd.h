@@ -963,4 +963,3 @@ int ndh);
 void zero(float *A, int u_max);
 void normalize_data(float **data, int ntr, int ns);
 
-
