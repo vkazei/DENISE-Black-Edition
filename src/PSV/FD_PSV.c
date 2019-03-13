@@ -321,7 +321,7 @@ void FD_PSV()
                 }
 
                 MPI_Barrier(SHOT_COMM);
-
+		printf("\n\n\BEFORE STARTING SIMULATION\n\n");
                 /*==================================================================================
                    Starting simulation (forward model)
 ==================================================================================*/

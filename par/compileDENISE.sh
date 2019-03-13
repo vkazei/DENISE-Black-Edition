@@ -1,6 +1,4 @@
 cd ../src
-#make clean
+make clean
 make denise
 cd ../par
-
-

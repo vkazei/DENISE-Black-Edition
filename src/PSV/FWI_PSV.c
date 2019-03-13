@@ -94,8 +94,10 @@ void FWI_PSV()
 
   /* open log-file (each PE is using different file) */
   /*	fp=stdout; */
+  printf("\n\n !!! BEFORE strcat(LOG_FILE, ext) !!! \n\n");
   sprintf(ext, ".%i", MYID);
   strcat(LOG_FILE, ext);
+  printf("\n\n !!! AFTER strcat(LOG_FILE, ext) !!! \n\n");
 
   if ((MYID == 0) && (LOG == 1))
     FP = stdout;
@@ -108,13 +110,18 @@ void FWI_PSV()
   /* ----------------------- */
 
   /* domain decomposition */
+	
+  printf("\n\n !!! BEFORE initproc()  !!! \n\n");
   initproc();
+  printf("\n\n !!! AFTER initproc()  !!! \n\n");
 
   NT = iround(TIME / DT); /* number of timesteps */
 
   /* output of parameters to log-file or stdout */
   if (MYID == 0)
+    printf("\n\n !!! BEFORE write_par(FP) !!! \n\n");
     write_par(FP);
+    printf("\n\n !!! AFTER write_par(FP) !!! \n\n");
 
   /* NXG, NYG denote size of the entire (global) grid */
   NXG = NX;
@@ -179,11 +186,13 @@ void FWI_PSV()
     err("allocation failure for buffer for MPI_Bsend !");
   MPI_Buffer_attach(buff_addr, buffsize);
 
+  printf("\n\n !!! BEFORE alocation req_ !!! \n\n");
   /* allocation for request and status arrays */
   req_send = (MPI_Request *)malloc(REQUEST_COUNT * sizeof(MPI_Request));
   req_rec = (MPI_Request *)malloc(REQUEST_COUNT * sizeof(MPI_Request));
   send_statuses = (MPI_Status *)malloc(REQUEST_COUNT * sizeof(MPI_Status));
   rec_statuses = (MPI_Status *)malloc(REQUEST_COUNT * sizeof(MPI_Status));
+  printf("\n\n !!! AFTER alocation req_ !!! \n\n");
 
   /* --------- add different modules here ------------------------ */
   ns = NT; /* in a FWI one has to keep all samples of the forward modeled data
@@ -209,6 +218,8 @@ void FWI_PSV()
     }
   }
 
+	
+  printf("\n\n !!! BEFORE alloc_seisPSV() !!! \n\n");
   if ((N_STREAMER == 0) && (READREC != 2))
   {
 
@@ -271,8 +282,10 @@ void FWI_PSV()
     nygrav = NYG + NGRAVB;
   }
 
+  printf("\n\n !!! BEFORE alloc_PSV() !!! \n\n");
   /* allocate memory for PSV forward problem */
   alloc_PSV(&wavePSV, &wavePSV_PML);
+  printf("\n\n !!! AFTER alloc_PSV() !!! \n\n");
 
   /* calculate damping coefficients for CPMLs (PSV problem)*/
   if (FW > 0)

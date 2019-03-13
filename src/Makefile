@@ -29,6 +29,7 @@ EXEC= ../bin
 # IFLAGS=-I./../libcseife -I$//sfs/fs2/work-sh2/sungw331/fftw-3.3.4/include -I./../include
 
 # On Desktop computer with LinuxMint 17, OpenMPI and gcc 4.8.2
+#CC=mpicc -acc -Minfo=accel -ta=tesla:cc60,managed
 CC=mpicc -acc -Minfo=accel -ta=tesla:cc60,managed
 LFLAGS=-lm -lcseife -lfftw3 -lstdc++
 CFLAGS=-O3 -w -D_FORTIFY_SOURCE=0

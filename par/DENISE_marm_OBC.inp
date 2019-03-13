@@ -6,7 +6,7 @@
 #
 # ------------------ DENISE Mode ---------------------------------
 # Operation mode:
-(forward_modelling_only=0;FWI=1;RTM=2)_(MODE) = 1 
+(forward_modelling_only=0;FWI=1;RTM=2)_(MODE) = 0
 #
 # ---------------- DENISE Physics -----------------------------
 (2D-PSV=1;2D-AC=2;2D-VTI=3;2D-TTI=4;2D-SH=5)_(PHYSICS) = 1
@@ -29,13 +29,13 @@ max_relative_error = 1
 #-------------------- 2-D Grid -----------------------------------
 number_of_gridpoints_in_x-direction_(NX) = 400
 number_of_gridpoints_in_y-direction_(NY) = 139
-distance_between_gridpoints(in_m)_(DH) = 2.5 
+distance_between_gridpoints(in_m)_(DH) = 25 
 #
 # Note that y denotes the vertical direction !
 #
 #-------------------Time Stepping -------------------------------
 time_of_wave_propagation_(in_sec)_(TIME) = 5.0
-timestep_(in_seconds)_(DT) = 2.5e-4
+timestep_(in_seconds)_(DT) = 2.5e-3
 #
 #--------------------Source---------------------------------------
 # Shape_of_source-signal:
@@ -53,7 +53,7 @@ write_source_wavelet_(yes=1)_(WRITE_STF) = 1
 #
 #--------------------- Model -------------------------------------
 read_model_parameters_from_MFILE(yes=1)(READMOD) = 1
-MFILE = start/marmousi_II_start_1D
+MFILE = start/marmousi_II_marine
 write_model_files_(yes=1)_(WRITEMOD) = 1
 #
 #---------------------Q-approximation-----------------------------
@@ -169,8 +169,7 @@ lower_limit_for_vs/mu_(VSLOWERLIM) = 0.0
 upper_limit_for_rho_(RHOUPPERLIM) = 3000.0
 lower_limit_for_rho_(RHOLOWERLIM) = 1000.0
 upper_limit_for_qs_(QSUPPERLIM) = 100.0
-lower_limit_for_qs_(QSLOWERLIM) = 10.0
-#
+lower_limit_for_qs_(QSLOWERLIM) = 10.0#
 #
 # ----- Optimization-Method ------ #
 gradient_method_(PCG=1/LBFGS=2)_(GRAD_METHOD) = 2

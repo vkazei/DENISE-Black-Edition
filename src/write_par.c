@@ -383,6 +383,7 @@ void write_par(FILE *fp){
 	
 	fprintf(fp,"\n\n");
 	fprintf(fp," --------------- Optimization method -------------------\n");
+	printf("\n\n !!! GRAD_METHOD %i !!!\n\n", GRAD_METHOD);
 	switch(GRAD_METHOD){
 		case 1:
 			fprintf(fp," GRAD_METHOD=%d: PCG\n",GRAD_METHOD);

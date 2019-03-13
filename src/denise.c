@@ -67,6 +67,9 @@ MPI_Init(&argc,&argv);
 MPI_Comm_size(MPI_COMM_WORLD,&NP);
 MPI_Comm_rank(MPI_COMM_WORLD,&MYID);
 
+printf("MPI_Comm_size NP = %i\n",NP);
+printf("MPI_Comm_rank MYID = %i\n",MYID);
+
 setvbuf(stdout, NULL, _IONBF, 0);
 		
 /* print program name, version etc to stdout*/
@@ -86,12 +89,17 @@ if(FP==NULL) {
 }
 
 /* read input file *.inp */
+printf("\n\n !!! BEFORE read_par(FP) !!! \n\n");
 read_par(FP);
+printf("\n\n !!! AFTER read_par(FP) !!! \n\n");
  
 /* Init shot parallelization*/
 COLOR = MYID / (NPROCX * NPROCY);
 MPI_Comm_split(MPI_COMM_WORLD, COLOR, MYID, &SHOT_COMM);
 MPI_Comm_rank(SHOT_COMM, &MYID_SHOT);
+
+printf("MPI_Comm_split SHOT_COMM = %i\n",SHOT_COMM);
+printf("MPI_Comm_rank MYID_SHOT = %i\n",MYID_SHOT);
 
 /* Init subdomain communication*/
 MPI_Comm_split(MPI_COMM_WORLD, MYID_SHOT, MYID, &DOMAIN_COMM);
@@ -109,13 +117,20 @@ sources(&NSHOTS);
 printf("The number of shots %d", NSHOTS);
 
 /* check if parameters for PHYSICS and MODE are correct */
+if (COLOR==0)
+{
+printf("!!!!! check_mode_phys() !!!!!\n\n");
 check_mode_phys();
+}
 
 /* ---------------------------------------------------- */
 /* Forward, FWI, RTM and RTMOD modules (2D PSV-problem) */
 /* ---------------------------------------------------- */
+printf("!!!!! BEFORE  physics_PSV() !!!!!\n\n");
 if(PHYSICS==1){
+printf("!!!!! INSIDE physics_PSV() !!!!!\n\n");
   physics_PSV();
+printf("!!!!! AFTER physics_PSV() !!!!!\n\n");
 }
 
 /* ---------------------------------------------------- */
