@@ -2,9 +2,9 @@
 ##SBATCH --partition=batch
 #SBATCH --job-name="DENISE"
 ##SBATCH --res=GPU_WORKSHOP
-#SBATCH --gres=gpu:p100:4
+#SBATCH --gres=gpu:p100:2
 #SBATCH --nodes=1
-#SBATCH --tasks=4
+#SBATCH --tasks=2
 #SBATCH --time=00:10:00
 #SBATCH --err=err.out
 #SBATCH --output=out.out

@@ -57,6 +57,7 @@
 #include <stdlib.h>	
 #include "globvar.h"      /* definition of global variables  */
 #include "cseife.h"
+#include "openacc.h"
 
 int main(int argc, char **argv){
 char * fileinp;
@@ -79,10 +80,16 @@ if (MYID == 0) info(stdout);
 
 char buffer[1];
 
-printf("\n\n MYID =  %i\n\n",MYID);
-sprintf(buffer,"%d", MYID);
-setenv("CUDA_VISIBLE_DEVICES", buffer , 1);
-printf("\n\nBUFFER %s\n\n",buffer);
+int ngpus;
+
+printf("\n\n MYID =  %i\n",MYID);
+ngpus = acc_get_num_devices(acc_device_nvidia);
+printf("NGPUS = %i\n", ngpus);
+sprintf(buffer,"%d", MYID%ngpus);
+acc_set_device_num(MYID%ngpus, acc_device_nvidia);
+printf("ID GPU = %i\n",MYID%ngpus);
+//setenv("CUDA_VISIBLE_DEVICES", buffer , 1);
+//printf("\n\nBUFFER %s\n\n",buffer);
 //cudaSetDevice(MYID)
 
 MPI_Barrier(MPI_COMM_WORLD);
