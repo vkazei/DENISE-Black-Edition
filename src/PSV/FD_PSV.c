@@ -204,7 +204,7 @@ void FD_PSV()
         /* Reading source positions from SOURCE_FILE */
         acq.srcpos = sources(&nsrc);
         nsrc_glob = nsrc;
-        //NSHOTS = nsrc;
+        NSHOTS = nsrc;
 
         /* create model grids */
         if (L)
@@ -275,8 +275,11 @@ void FD_PSV()
         NSHOT1 = (1 + (NSHOTS-1) / NCOLORS) * COLOR + 1;
         NSHOT2 = min(NSHOT1 + (NSHOTS-1) / NCOLORS, NSHOTS);
         
+
+	fprintf(FP, "Before shots PE %d was successfull, NSHOT1 %d, NSHOT2 %d, NSHOTS %d,\n\n", MYID, NSHOT1, NSHOT2, NSHOTS);
         for (ishot = NSHOT1; ishot <= NSHOT2; ishot += SHOTINC)
         {
+		fprintf(FP, "Before shots PE %d was successfull.\n\n", MYID);
                 /*for (ishot=1;ishot<=1;ishot+=1){*/
                 /*if(ishot!=10 && ishot!=11 && ishot!=12 && ishot!=13 && ishot!=14 && ishot!=29){*/
 
@@ -559,3 +562,4 @@ void FD_PSV()
 
         fclose(FP);
 }
+
