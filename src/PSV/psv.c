@@ -15,8 +15,8 @@
 #include "fd.h"
 
 void psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, struct matPSV *matPSV, struct fwiPSV *fwiPSV, struct mpiPSV *mpiPSV,
-				 struct seisPSV *seisPSV, struct seisPSVfwi *seisPSVfwi, struct acq *acq, float *hc, int ishot, int nshots, int nsrc_loc,
-				 int ns, int ntr, float **Ws, float **Wr, int hin, int *DTINV_help, int mode, MPI_Request *req_send, MPI_Request *req_rec)
+		 struct seisPSV *seisPSV, struct seisPSVfwi *seisPSVfwi, struct acq *acq, float *hc, int ishot, int nshots, int nsrc_loc,
+		 int ns, int ntr, float **Ws, float **Wr, int hin, int *DTINV_help, int mode, MPI_Request *req_send, MPI_Request *req_rec)
 {
 
 	/* global variables */
@@ -58,16 +58,16 @@ void psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, struct matPSV
 	if (L)
 	{
 		zero_denise_visc_PSV(-nd + 1, NY + nd, -nd + 1, NX + nd, (*wavePSV).pvx, (*wavePSV).pvy, (*wavePSV).psxx, (*wavePSV).psyy, (*wavePSV).psxy,
-												 (*wavePSV).ux, (*wavePSV).uy, (*wavePSV).uxy, (*wavePSV).pvxp1, (*wavePSV).pvyp1, (*wavePSV_PML).psi_sxx_x, (*wavePSV_PML).psi_sxy_x,
-												 (*wavePSV_PML).psi_vxx, (*wavePSV_PML).psi_vyx, (*wavePSV_PML).psi_syy_y, (*wavePSV_PML).psi_sxy_y, (*wavePSV_PML).psi_vyy, (*wavePSV_PML).psi_vxy,
-												 (*wavePSV_PML).psi_vxxs, (*wavePSV).pr, (*wavePSV).pp, (*wavePSV).pq);
+							 (*wavePSV).ux, (*wavePSV).uy, (*wavePSV).uxy, (*wavePSV).pvxp1, (*wavePSV).pvyp1, (*wavePSV_PML).psi_sxx_x, (*wavePSV_PML).psi_sxy_x,
+							 (*wavePSV_PML).psi_vxx, (*wavePSV_PML).psi_vyx, (*wavePSV_PML).psi_syy_y, (*wavePSV_PML).psi_sxy_y, (*wavePSV_PML).psi_vyy, (*wavePSV_PML).psi_vxy,
+							 (*wavePSV_PML).psi_vxxs, (*wavePSV).pr, (*wavePSV).pp, (*wavePSV).pq);
 	}
 	else
 	{
 		zero_denise_elast_PSV(-nd + 1, NY + nd, -nd + 1, NX + nd, (*wavePSV).pvx, (*wavePSV).pvy, (*wavePSV).psxx, (*wavePSV).psyy, (*wavePSV).psxy,
-													(*wavePSV).ux, (*wavePSV).uy, (*wavePSV).uxy, (*wavePSV).pvxp1, (*wavePSV).pvyp1, (*wavePSV_PML).psi_sxx_x,
-													(*wavePSV_PML).psi_sxy_x, (*wavePSV_PML).psi_vxx, (*wavePSV_PML).psi_vyx, (*wavePSV_PML).psi_syy_y, (*wavePSV_PML).psi_sxy_y,
-													(*wavePSV_PML).psi_vyy, (*wavePSV_PML).psi_vxy, (*wavePSV_PML).psi_vxxs);
+							  (*wavePSV).ux, (*wavePSV).uy, (*wavePSV).uxy, (*wavePSV).pvxp1, (*wavePSV).pvyp1, (*wavePSV_PML).psi_sxx_x,
+							  (*wavePSV_PML).psi_sxy_x, (*wavePSV_PML).psi_vxx, (*wavePSV_PML).psi_vyx, (*wavePSV_PML).psi_syy_y, (*wavePSV_PML).psi_sxy_y,
+							  (*wavePSV_PML).psi_vyy, (*wavePSV_PML).psi_vxy, (*wavePSV_PML).psi_vxxs);
 	}
 
 	/*----------------------  loop over timesteps (forward model) ------------------*/
@@ -115,9 +115,9 @@ void psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, struct matPSV
 		if (mode == 0 || mode == 2)
 		{
 			update_v_PML_PSV(1, NX, 1, NY, nt, (*wavePSV).pvx, (*wavePSV).pvxp1, (*wavePSV).pvxm1, (*wavePSV).pvy, (*wavePSV).pvyp1, (*wavePSV).pvym1, (*wavePSV).uttx, (*wavePSV).utty, (*wavePSV).psxx, (*wavePSV).psyy,
-											 (*wavePSV).psxy, (*matPSV).prip, (*matPSV).prjp, (*acq).srcpos_loc, (*acq).signals, (*acq).signals, nsrc_loc, (*wavePSV_PML).absorb_coeff, hc, infoout, 0, (*wavePSV_PML).K_x, (*wavePSV_PML).a_x,
-											 (*wavePSV_PML).b_x, (*wavePSV_PML).K_x_half, (*wavePSV_PML).a_x_half, (*wavePSV_PML).b_x_half, (*wavePSV_PML).K_y, (*wavePSV_PML).a_y, (*wavePSV_PML).b_y, (*wavePSV_PML).K_y_half,
-											 (*wavePSV_PML).a_y_half, (*wavePSV_PML).b_y_half, (*wavePSV_PML).psi_sxx_x, (*wavePSV_PML).psi_syy_y, (*wavePSV_PML).psi_sxy_y, (*wavePSV_PML).psi_sxy_x);
+							 (*wavePSV).psxy, (*matPSV).prip, (*matPSV).prjp, (*acq).srcpos_loc, (*acq).signals, (*acq).signals, nsrc_loc, (*wavePSV_PML).absorb_coeff, hc, infoout, 0, (*wavePSV_PML).K_x, (*wavePSV_PML).a_x,
+							 (*wavePSV_PML).b_x, (*wavePSV_PML).K_x_half, (*wavePSV_PML).a_x_half, (*wavePSV_PML).b_x_half, (*wavePSV_PML).K_y, (*wavePSV_PML).a_y, (*wavePSV_PML).b_y, (*wavePSV_PML).K_y_half,
+							 (*wavePSV_PML).a_y_half, (*wavePSV_PML).b_y_half, (*wavePSV_PML).psi_sxx_x, (*wavePSV_PML).psi_syy_y, (*wavePSV_PML).psi_sxy_y, (*wavePSV_PML).psi_sxy_x);
 		}
 	}
 

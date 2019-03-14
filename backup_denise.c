@@ -89,9 +89,7 @@ if(FP==NULL) {
 }
 
 /* read input file *.inp */
-printf("\n\n !!! BEFORE read_par(FP) !!! \n\n");
 read_par(FP);
-printf("\n\n !!! AFTER read_par(FP) !!! \n\n");
  
 /* Init shot parallelization*/
 COLOR = MYID / (NPROCX * NPROCY);
@@ -106,10 +104,10 @@ MPI_Comm_split(MPI_COMM_WORLD, MYID_SHOT, MYID, &DOMAIN_COMM);
 
 
 NCOLORS = NP / (NPROCX * NPROCY);
+printf("....MYID.......%d.. %d.. COLOR......shotcome\n", MYID, COLOR);
+printf("...........%d.. %d........shotcome\n", NP, NCOLORS);
 
-/*printf("MYID: %d \t COLOR: %d \n", MYID, COLOR);
-printf("NP: %d \t NCOLORS: %d \n", NP, NCOLORS);
-printf("NX: %d \t NY: %d \n", NPROCX, NPROCY);*/
+printf("...........%d.. %d........NX NY\n", NPROCX, NPROCY);
 
 MPI_Barrier(MPI_COMM_WORLD);
 

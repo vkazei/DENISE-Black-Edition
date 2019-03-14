@@ -105,13 +105,16 @@ float **sources(int *nsrc){
 			fprintf(FP," Message from function sources (written by PE %d):\n",MYID);			
 
 		}
-
+	printf("\n\nBEFORE Barrier MYID = %i\n\n", MYID);
 	MPI_Barrier(MPI_COMM_WORLD);
 	MPI_Bcast(nsrc,1,MPI_INT,0,MPI_COMM_WORLD);
 	MPI_Bcast(&TS,1,MPI_FLOAT,0,MPI_COMM_WORLD);
+	
+	printf("\n\nAFTER Bcast MYID = %i\n\n", MYID);
 	if (MYID!=0) srcpos=matrix(1,8,1,*nsrc);
 	MPI_Bcast(&srcpos[1][1],(*nsrc)*8,MPI_FLOAT,0,MPI_COMM_WORLD);
 
+	printf("\n\nMYID = %i\n\n", MYID);
 /*	if (MYID==0){
 		fprintf(FP,"\n **Message from function source (written by PE %d):\n",MYID);
 		fprintf(FP," Number of global source positions found: %i\n",*nsrc);

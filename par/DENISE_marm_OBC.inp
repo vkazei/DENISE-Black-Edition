@@ -27,20 +27,20 @@ FD_ORDER = 8
 #         4 =                 E = 3.0 %
 max_relative_error = 1
 #-------------------- 2-D Grid -----------------------------------
-number_of_gridpoints_in_x-direction_(NX) = 400
-number_of_gridpoints_in_y-direction_(NY) = 139
-distance_between_gridpoints(in_m)_(DH) = 25 
+number_of_gridpoints_in_x-direction_(NX) = 500
+number_of_gridpoints_in_y-direction_(NY) = 174
+distance_between_gridpoints(in_m)_(DH) = 20.0 
 #
 # Note that y denotes the vertical direction !
 #
 #-------------------Time Stepping -------------------------------
-time_of_wave_propagation_(in_sec)_(TIME) = 5.0
-timestep_(in_seconds)_(DT) = 2.5e-3
+time_of_wave_propagation_(in_sec)_(TIME) = 6.0
+timestep_(in_seconds)_(DT) = 2.0e-3
 #
 #--------------------Source---------------------------------------
 # Shape_of_source-signal:
 (ricker=1;fumue=2;from_SOURCE_FILE=3;SIN**3=4;Gaussian_deriv=5;Spike=6;Klauder=7)_(QUELLART) = 6
-SIGNAL_FILE = ./wavelet/wavelet_plexiglas
+SIGNAL_FILE = ./wavelet/wavelet_marmousi
 duration_of_Klauder_wavelet_(in_seconds)_(TS) = 8.0
 read_source_positions_from_SOURCE_FILE_(yes=1)_(SRCREC) = 1
 SOURCE_FILE = ./source/source_OBC_VSP.dat 
@@ -137,7 +137,7 @@ type_of_material_parameters_to_invert_(Vp,Vs,rho=1/Zp,Zs,rho=2/lam,mu,rho=3)_(IN
 adjoint_source_type_(x-y_components=1/y_comp=2/x_comp=3/p_comp=4/x-p_comp=5/y-p_comp=6/x-y-p_comp=7)_(QUELLTYPB) = 1
 #
 #
-testshots_for_step_length_estimation_(TESTSHOT_START,TESTSHOT_END,TESTSHOT_INCR) = 25, 75, 10
+testshots_for_step_length_estimation_(TESTSHOT_START,TESTSHOT_END,TESTSHOT_INCR) = 1, 1, 2
 #
 #
 # ----- Definition of gradient taper geometry ----- #
@@ -169,7 +169,8 @@ lower_limit_for_vs/mu_(VSLOWERLIM) = 0.0
 upper_limit_for_rho_(RHOUPPERLIM) = 3000.0
 lower_limit_for_rho_(RHOLOWERLIM) = 1000.0
 upper_limit_for_qs_(QSUPPERLIM) = 100.0
-lower_limit_for_qs_(QSLOWERLIM) = 10.0#
+lower_limit_for_qs_(QSLOWERLIM) = 10.0
+#
 #
 # ----- Optimization-Method ------ #
 gradient_method_(PCG=1/LBFGS=2)_(GRAD_METHOD) = 2

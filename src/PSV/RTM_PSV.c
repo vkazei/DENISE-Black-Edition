@@ -573,6 +573,7 @@ MPI_Buffer_detach(buff_addr,&buffsize);
 MPI_Barrier(MPI_COMM_WORLD);
 
 if (MYID==0){
+
 	fprintf(FP,"\n **Info from main (written by PE %d): \n",MYID);
 	fprintf(FP," CPU time of program per PE: %li seconds.\n",clock()/CLOCKS_PER_SEC);
 	time8=MPI_Wtime();
