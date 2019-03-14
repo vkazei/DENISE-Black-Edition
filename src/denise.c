@@ -104,7 +104,6 @@ printf("MPI_Comm_rank MYID_SHOT = %i\n",MYID_SHOT);
 /* Init subdomain communication*/
 MPI_Comm_split(MPI_COMM_WORLD, MYID_SHOT, MYID, &DOMAIN_COMM);
 
-
 NCOLORS = NP / (NPROCX * NPROCY);
 
 /*printf("MYID: %d \t COLOR: %d \n", MYID, COLOR);
@@ -113,8 +112,9 @@ printf("NX: %d \t NY: %d \n", NPROCX, NPROCY);*/
 
 MPI_Barrier(MPI_COMM_WORLD);
 
-sources(&NSHOTS);
-printf("The number of shots %d", NSHOTS);
+count_src();
+
+/*printf("Number of shots %d \n", NSHOTS);*/
 
 /* check if parameters for PHYSICS and MODE are correct */
 if (COLOR==0)

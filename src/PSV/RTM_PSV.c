@@ -583,12 +583,6 @@ if (MYID==0){
 	time_av_v_exchange=time_av_v_exchange/(double)NT;
 	time_av_s_exchange=time_av_s_exchange/(double)NT;
 	time_av_timestep=time_av_timestep/(double)NT;
-	/* fprintf(FP," Average times for \n");
-	fprintf(FP," velocity update:  \t %5.3f seconds  \n",time_av_v_update);
-	fprintf(FP," stress update:  \t %5.3f seconds  \n",time_av_s_update);
-	fprintf(FP," velocity exchange:  \t %5.3f seconds  \n",time_av_v_exchange);
-	fprintf(FP," stress exchange:  \t %5.3f seconds  \n",time_av_s_exchange);
-	fprintf(FP," timestep:  \t %5.3f seconds  \n",time_av_timestep);*/
 		
 }
 

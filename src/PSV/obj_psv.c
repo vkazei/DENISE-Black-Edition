@@ -45,9 +45,6 @@ float obj_psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, struct m
 
 		if (RUN_MULTIPLE_SHOTS) nshots=nsrc; else nshots=1;
 
-		//NSHOT1 = NSHOTS/NCOLORS*COLOR + 1;
-		//NSHOT2 = min(NSHOT1 + NSHOTS/NCOLORS, NSHOTS);
-
 		for (ishot = NSHOT1; ishot <= NSHOT2; ishot += 1)
 		{		
 
