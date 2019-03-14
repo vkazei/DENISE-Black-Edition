@@ -52,7 +52,9 @@
  *  ---------------------------------------------------------------------------------------*/
 
 #include "fd.h"           /* general include file for viscoelastic FD programs */
-
+#include <cuda_runtime.h>
+#include <cuda.h>
+#include <stdlib.h>	
 #include "globvar.h"      /* definition of global variables  */
 #include "cseife.h"
 
@@ -74,6 +76,16 @@ setvbuf(stdout, NULL, _IONBF, 0);
 		
 /* print program name, version etc to stdout*/
 if (MYID == 0) info(stdout);
+
+char buffer[1];
+
+printf("\n\n MYID =  %i\n\n",MYID);
+sprintf(buffer,"%d", MYID);
+setenv("CUDA_VISIBLE_DEVICES", buffer , 1);
+printf("\n\nBUFFER %s\n\n",buffer);
+//cudaSetDevice(MYID)
+
+MPI_Barrier(MPI_COMM_WORLD);
 
 /* read parameters from parameter-file (stdin) */
 fileinp=argv[1];

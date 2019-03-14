@@ -1,13 +1,13 @@
 #!/bin/bash
 ##SBATCH --partition=batch
 #SBATCH --job-name="DENISE"
-#SBATCH --res=GPU_WORKSHOP
+##SBATCH --res=GPU_WORKSHOP
 #SBATCH --gres=gpu:p100:4
 #SBATCH --nodes=1
 #SBATCH --tasks=4
 #SBATCH --time=00:10:00
-#SBATCH --err=output.err
-#SBATCH --output=output.out
+#SBATCH --err=err.out
+#SBATCH --output=out.out
 ##SBATCH --exclusive
 
 /usr/bin/time mpirun ../bin/denise DENISE_marm_OBC.inp FWI_workflow_marmousi.inp
