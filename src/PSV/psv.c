@@ -134,10 +134,12 @@ void psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, struct matPSV
 		}
 		else
 		{
-			zero_denise_elast_PSV(-nd + 1, NY + nd, -nd + 1, NX + nd, (*wavePSV).pvx, (*wavePSV).pvy, (*wavePSV).psxx, (*wavePSV).psyy, (*wavePSV).psxy,
+	printf("!!! BEFORE zero_denise_elast !!! MODE%i \n",mode);		
+	zero_denise_elast_PSV(-nd + 1, NY + nd, -nd + 1, NX + nd, (*wavePSV).pvx, (*wavePSV).pvy, (*wavePSV).psxx, (*wavePSV).psyy, (*wavePSV).psxy,
 														(*wavePSV).ux, (*wavePSV).uy, (*wavePSV).uxy, (*wavePSV).pvxp1, (*wavePSV).pvyp1, (*wavePSV_PML).psi_sxx_x,
 														(*wavePSV_PML).psi_sxy_x, (*wavePSV_PML).psi_vxx, (*wavePSV_PML).psi_vyx, (*wavePSV_PML).psi_syy_y, (*wavePSV_PML).psi_sxy_y,
 														(*wavePSV_PML).psi_vyy, (*wavePSV_PML).psi_vxy, (*wavePSV_PML).psi_vxxs);
+		printf("!!! AFTER zero_denise_elast !!! MODE%i \n",mode);		
 		}
 
 		/*----------------------  loop over timesteps (forward model) ------------------*/
@@ -163,7 +165,7 @@ void psv(struct wavePSV *wavePSV, struct wavePSV_PML *wavePSV_PML, struct matPSV
 		//#pragma acc parallel private(i,j)
 		for (nt = 1; nt <= NT; nt++)
 		{
-
+			//printf("!!! NT = %i!!!MODE%i \n",nt,mode);
 			/* Check if simulation is still stable */
 			/*if (isnan(pvy[NY/2][NX/2])) err(" Simulation is unstable !");*/
 			if (isnan((*wavePSV).pvy[NY / 2][NX / 2]))
